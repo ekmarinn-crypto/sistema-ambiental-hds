@@ -1,1 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HDS-SGA | Sistema Integral de Gestión HDS</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b',
+            },
+            forest: '#0f291e',
+            slate: { 850: '#1e293b' }
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
 
+  <!-- Sidebar Navigation -->
+  <aside class="w-full md:w-64 bg-forest text-white flex-shrink-0 flex flex-col justify-between z-20 shadow-xl">
+    <div>
+      <div class="p-4 border-b border-emerald-800/50 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-emerald-900/50">
+          <i class="fa-solid fa-leaf"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base leading-tight tracking-wide">HDS-SGA</h1>
+          <p class="text-[11px] text-emerald-300 font-medium">Gestión Ambiental & SIHO-A</p>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-600 text-white shadow-md">
+          <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+          <span>Panel Principal</span>
+        </button>
+        <button onclick="switchTab('charlas')" id="nav-charlas" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-chalkboard-user w-4 text-center"></i>
+          <span>Charlas SIHO-A</span>
+        </button>
+        <button onclick="switchTab('vacaciones')" id="nav-vacaciones" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-calendar-days w-4 text-center"></i>
+          <span>Vacaciones SIHO-A</span>
+        </button>
+        <button onclick="switchTab('simulacros')" id="nav-simulacros" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-fire-extinguisher w-4 text-center"></i>
+          <span>Simulacros SIHO-A</span>
+        </button>
+        <button onclick="switchTab('incidentes')" id="nav-incidentes" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-triangle-exclamation w-4 text-center"></i>
+          <span>Incidentes & Accidentes</span>
+        </button>
+        <button onclick="switchTab('delegados')" id="nav-delegados" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-users-gear w-4 text-center"></i>
+          <span>Informe de Delegados</span>
+        </button>
+        <button onclick="switchTab('comite')" id="nav-comite" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-handshake w-4 text-center"></i>
+          <span>Informe de Comité SSST</span>
+        </button>
+        <button onclick="switchTab('epidemiologia')" id="nav-epidemiologia" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-heart-pulse w-4 text-center"></i>
+          <span>Vigilancia Epidemiológica</span>
+        </button>
+        <button onclick="switchTab('pozos')" id="nav-pozos" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-oil-well w-4 text-center"></i>
+          <span>Informes por Pozo</span>
+        </button>
+        <button onclick="switchTab('desechos')" id="nav-desechos" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-recycle w-4 text-center"></i>
+          <span>Desechos (Peligrosos y Domésticos)</span>
+        </button>
+        <button onclick="switchTab('inspecciones')" id="nav-inspecciones" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-clipboard-check w-4 text-center"></i>
+          <span>Inspecciones SIHO-A</span>
+        </button>
+        <button onclick="switchTab('reportes')" id="nav-reportes" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-emerald-900/50 hover:text-white transition-all">
+          <i class="fa-solid fa-file-contract w-4 text-center"></i>
+          <span>Exportar y Reportes</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-3 border-t border-emerald-800/50 bg-emerald-950/40">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xs">
+          EM
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-xs font-semibold truncate text-slate-200">Coordinación SIHO-A</p>
+          <p class="text-[10px] text-emerald-400 truncate">Coord. Operaciones / HDS</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col h-screen overflow-y-auto custom-scrollbar">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-0 z-10 shadow-sm">
+      <div>
+        <h2 id="page-title" class="text-xl font-bold text-slate-800">Panel Principal de Indicadores HDS-SGA</h2>
+        <p class="text-xs text-slate-500">Sistema integral de gestión ambiental, seguridad, higiene y ambiente (SIHO-A)</p>
+      </div>
+      
+      <div class="flex items-center gap-2.5 w-full sm:w-auto">
+        <button onclick="openModal('modal-talk')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-medium text-xs flex items-center gap-2 transition shadow-md">
+          <i class="fa-solid fa-plus"></i> Nueva Charla
+        </button>
+        <button onclick="openModal('modal-quick')" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl font-medium text-xs flex items-center gap-2 transition shadow-md">
+          <i class="fa-solid fa-sliders"></i> Registrar Módulo
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic Container -->
+    <div class="p-6 space-y-6 flex-1">
+      <!-- KPI SUMMARY CARDS -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Charlas & Capacitación</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="kpi-total-talks" class="text-2xl font-extrabold text-slate-800">0</h3>
+              <span class="text-xs text-slate-500">sesiones</span>
+            </div>
+            <p class="mt-1 text-xs text-emerald-600 font-medium"><span id="kpi-total-attendees">0</span> asistentes totales</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Simulacros Ejecutados</span>
+            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-fire-extinguisher"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="kpi-total-simulacros" class="text-2xl font-extrabold text-slate-800">0</h3>
+              <span class="text-xs text-slate-500">ejercicios</span>
+            </div>
+            <p class="mt-1 text-xs text-blue-600 font-medium">100% plan operativo</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Incidentes & Accidentes</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="kpi-total-incidentes" class="text-2xl font-extrabold text-slate-800">0</h3>
+              <span class="text-xs text-slate-500">reportes</span>
+            </div>
+            <p class="mt-1 text-xs text-emerald-600 font-medium">Bajo control operativo</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Pozos Terminados / PEA</span>
+            <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-oil-well"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="kpi-total-pozos" class="text-2xl font-extrabold text-slate-800">0</h3>
+              <span class="text-xs text-slate-500">pozos</span>
+            </div>
+            <p class="mt-1 text-xs text-purple-600 font-medium">Cumplimiento RACDA / MINEC</p>
+          </div>
+        </div>
+      </section>
